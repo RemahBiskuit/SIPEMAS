@@ -1,0 +1,166 @@
+{% extends "layouts/base_auth.html" %}
+
+{% block title %} Sign UP {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<main>
+    <section class="vh-lg-100 mt-5 mt-lg-0 bg-soft d-flex align-items-center">
+        <div class="container">
+            <div class="row justify-content-center form-bg-image"
+                data-background-lg="{{ url_for('static', filename='assets/img/illustrations/signin.svg') }}">
+                <div class="col-12 d-flex align-items-center justify-content-center">
+                    <div class="bg-white shadow border-0 rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                        <div class="text-center text-md-center mb-4 mt-md-0">
+                            <h1 class="mb-0 h3">
+                                SIPEMAS - Sign UP
+                            </h1>
+                            <br />
+                            <p>
+                                {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                {% for message in messages %}
+                                <span class="text-danger">{{ messages }}</span>
+                                {% endfor %}
+                                {% endif %}
+                                {% endwith %}
+                            </p>
+                        </div>
+
+                        {% if success %}
+
+                        <div class="d-grid">
+                            <a href="{{ url_for('authentication_blueprint.login') }}" class="btn btn-gray-800">Sign
+                                IN</a>
+                        </div>
+
+                        {% else %}
+
+                        <form method="post" action="{{ url_for('main.register') }}" class="mt-4">
+                            {{ form.csrf_token }}
+                            {{ form.hidden_tag() }}
+                            <div class="row">
+                                <div class="col">
+                                    <!-- Form -->
+                                    <div class="form-group mb-4">
+                                        <label for="email">Username</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-user-circle"></span>
+                                            </span>
+                                            {{ form.username(placeholder="Username", class="form-control") }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label for="email">Your Email</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-envelope"></span>
+                                            </span>
+                                            {{ form.email(placeholder="Email", class="input form-control", type="email")
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label for="password">Your Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon2">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.password(placeholder="Password", class="form-control",
+                                            type="password")
+                                            }}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group mb-4">
+                                        <label for="password">Confirm Password</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.confirm_password(placeholder="Confirm Password",
+                                            class="form-control",
+                                            type="password")
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group mb-4">
+                                        <label for="password">Nama</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.nama(placeholder="Nama", class="form-control")
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="password">Alamat</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.alamat(placeholder="Alamat", class="form-control")
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="password">No Telp</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.notelp(placeholder="No Telp", class="form-control")
+                                            }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="password">Gender</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text" id="basic-addon1">
+                                                <span class="fas fa-unlock-alt"></span>
+                                            </span>
+                                            {{ form.gender(placeholder="Gender", class="form-control")
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- End of Form -->
+
+                            <div class="d-grid">
+                                {{ form.submit(class="btn btn-gray-800") }}
+                                <!-- <button type="submit" name="register" class="btn btn-gray-800">Sign UP</button> -->
+                            </div>
+                        </form>
+                        <br />
+                        <div class="d-flex justify-content-center align-items-center mt-1">
+                            <span class="fw-normal">
+                                Sudah mempunyai akun?
+                                <a href="{{ url_for('main.login') }}" class="fw-bold">Sign In</a>
+                            </span>
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,227 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Data review {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="py-4">
+    <nav aria-label="breadcrumb" class="d-none d-md-inline-block">
+        <ol class="breadcrumb breadcrumb-dark breadcrumb-transparent">
+            <li class="breadcrumb-item">
+                <a href="{{ url_for('main.dashboard') }}">
+                    <svg class="icon icon-xxs" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+                        </path>
+                    </svg>
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Data Review</li>
+        </ol>
+    </nav>
+    <div class="d-flex justify-content-between w-100 flex-wrap">
+        <div class="mb-3 mb-lg-0">
+            <h1 class="h4">Data Review</h1>
+            <p class="mb-0">Grafik data hasil scanning.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="card border-light shadow-sm components-section">
+            <div class="card-body">
+                <!-- pesan flask -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <!-- alert  -->
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <span class="fas fa-bullhorn me-1"></span>
+                    <strong>{{message}}</strong>
+                    <button type="button" class="btn-close btn-sm" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <!-- end pesan -->
+                <div class="container pt-4">
+                    <div class="container-fluid">
+                        <div id="frame_container" class="row pd-3">
+                            <div class="col-4">
+                                <center>
+                                    <!-- <canvas id="myChart" width="400" height="400"></canvas> -->
+                                    <canvas id="densityChart" width="400" height="400"></canvas>
+                                </center>
+                            </div>
+                            <div class="col-8">
+                                <center>
+                                    <canvas id="myChart" width="400" height="400"></canvas>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>
+    $(document).ready(function () {
+        $('#live').attr('class', 'nav-item');
+        $('#data-review').attr('class', 'nav-item active');
+    })
+    // Global parameters:
+    // do not resize the chart canvas when its container does (keep at 600x400px)
+    Chart.defaults.global.responsive = false;
+    // get chart canvas
+    // var ctx = document.getElementById("myChart").getContext("2d");
+    var densityCanvas = document.getElementById("densityChart");
+
+    var maskData = {
+        label: 'With Mask',
+        data: [{{ values }}],
+        backgroundColor: 'rgba(5, 171, 154, 0.5)',
+        borderColor: 'rgba(5, 171, 154, 1)',
+        borderWidth: 1
+    };
+
+    var noMaskData = {
+        label: 'No Mask',
+        data: [{{ valuesNoMask }}],
+        backgroundColor: 'rgba(255, 0, 77, 0.6)',
+        borderColor: 'rgba(255, 0, 77, 1)',
+        borderWidth: 1
+    };
+
+    var planetData = {
+        labels: ["Today"],
+        datasets: [maskData, noMaskData]
+    };
+
+    var chartOptions = {
+        scales: {
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    labelString: 'Today',
+                    fontSize: 16,
+                    display: true
+                },
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        legend: {
+            display: true
+        }
+    };
+
+    var barChart = new Chart(densityCanvas, {
+        type: 'bar',
+        data: planetData,
+        options: chartOptions
+    });
+
+
+    var canvas = document.getElementById("myChart");
+    var ctx = canvas.getContext('2d');
+
+    // Global Options:
+    Chart.defaults.global.defaultFontColor = 'black';
+    Chart.defaults.global.defaultFontSize = 16;
+
+    var data = {
+        labels: [{% for item in labels2 %}
+    "{{item}}",
+        {% endfor %}],
+    datasets: [{
+        label: "Mask",
+        fill: true,
+        lineTension: 0.1,
+        backgroundColor: "rgba(5, 171, 154, 0.5)",
+        borderColor: "rgba(5, 171, 154, 1)", // The main line color
+        borderCapStyle: 'square',
+        borderDash: [], // try [5, 15] for instance
+        borderDashOffset: 0.0,
+        borderJoinStyle: 'miter',
+        pointBorderColor: "rgba(5, 171, 154, 1)",
+        pointBackgroundColor: "rgba(5, 171, 154, 0.5)",
+        pointBorderWidth: 1,
+        pointHoverRadius: 8,
+        pointHoverBackgroundColor: "rgba(5, 171, 154, 0.5)",
+        pointHoverBorderColor: "rgba(5, 171, 154, 1)",
+        pointHoverBorderWidth: 1,
+        pointRadius: 4,
+        pointHitRadius: 10,
+        borderWidth: 1,
+        // notice the gap in the data and the spanGaps: true
+        data: [{% for item in values2 %}
+            {{ item }},
+    {% endfor %}],
+        spanGaps: true,
+    }, {
+        label: "No Mask",
+            fill: true,
+                lineTension: 0.1,
+                    backgroundColor: "rgba(255, 0, 77, 0.6)",
+                        borderColor: "rgba(255, 0, 77, 1)",
+                            borderCapStyle: 'butt',
+                                borderDash: [],
+                                    borderDashOffset: 0.0,
+                                        borderJoinStyle: 'miter',
+                                            pointBorderColor: "rgba(255, 0, 77, 1)",
+                                                pointBackgroundColor: "rgba(255, 0, 77, 0.6)",
+                                                    pointBorderWidth: 1,
+                                                        pointHoverRadius: 8,
+                                                            pointHoverBackgroundColor: "rgba(255, 0, 77, 0.6)",
+                                                                pointHoverBorderColor: "rgba(255, 0, 77, 1)",
+                                                                    pointHoverBorderWidth: 1,
+                                                                        pointRadius: 4,
+                                                                            pointHitRadius: 10,
+                                                                                borderWidth: 1,
+                                                                                    // notice the gap in the data and the spanGaps: false
+                                                                                    data: [{% for item in values3 %}
+    { { item } },
+    {% endfor %}],
+    spanGaps: false,
+    }
+
+  ]
+};
+
+    // Notice the scaleLabel at the same level as Ticks
+    var options = {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'All Day',
+                    fontSize: 16
+                }
+            }]
+        }
+    };
+
+    // Chart declaration:
+    var myBarChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: options
+    });
+
+</script>
+{% endblock javascripts %}

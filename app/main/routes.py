@@ -4,7 +4,8 @@ from io import BytesIO
 import cv2
 import numpy as np
 from PIL import Image
-from flask import render_template, Response, request, redirect, url_for, flash, session
+from flask import render_template, abort, send_file, Response, request, redirect, url_for, flash, session
+from werkzeug.security import safe_join
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.exceptions import abort
 from app import db, bcrypt, login_manager
@@ -21,9 +22,11 @@ import json
 import time
 import os
 import stat
+import datetime as dt
 from datetime import date
 from datetime import timedelta
 from time import gmtime, strftime
+from pathlib import Path
 
 counter = 100
 statusNotif = "nothing"
@@ -449,30 +452,54 @@ def image_processing():
         base64img = "data:image/png;base64," + b64encode(img_io.getvalue()).decode('ascii')
         return base64img
 
-FILE_SYSTEM_ROOT = "app/static/gambar_wajah"
 
-@main_bp.route("/browser")
-def browse():
-    itemList = os.listdir(FILE_SYSTEM_ROOT)
-    return render_template('home/browse.html', itemList=itemList)
+baseMaskPath = r'D:\KULIAH\TA\1. INI FOLDER SKRIPSI\SIPEMAS\app\static\gambar_wajah'
+#baseMaskPath = f"app/static/gambar_wajah/"
 
-@main_bp.route("/browser/<path:urlFilePath>")
-def browser(urlFilePath):
-    nestedFilePath = os.path.join(FILE_SYSTEM_ROOT, urlFilePath)
-    if os.path.isdir(nestedFilePath):
-        itemList = os.listdir(nestedFilePath)
-        fileProperties = {"filepath": nestedFilePath}
-        if not urlFilePath.startswith("/"):
-            urlFilePath = "/" + urlFilePath
-        return render_template('home/browse.html', urlFilePath=urlFilePath, itemList=itemList)
-    if os.path.isfile(nestedFilePath):
-        fileProperties = {"filepath": nestedFilePath}
-        sbuf = os.fstat(os.open(nestedFilePath, os.O_RDONLY)) #Opening the file and getting metadata
-        fileProperties['type'] = stat.S_IFMT(sbuf.st_mode) 
-        fileProperties['mode'] = stat.S_IMODE(sbuf.st_mode) 
-        fileProperties['mtime'] = sbuf.st_mtime 
-        fileProperties['size'] = sbuf.st_size 
-        if not urlFilePath.startswith("/"):
-            urlFilePath = "/" + urlFilePath
-        return render_template('home/file.html', currentFile=nestedFilePath, fileProperties=fileProperties)
-    return 'something bad happened'
+def getTimeStampString(tSec: float) -> str:
+    tObj = dt.datetime.fromtimestamp(tSec)
+    tStr = dt.datetime.strftime(tObj, '%Y-%m-%d %H:%M:%S')
+    return tStr
+
+def getReadableByteSize(num, suffix='B') -> str:
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Y', suffix)
+
+def getIconClassForFilename(fName):
+    fileExt = Path(fName).suffix
+    fileExt = fileExt[1:] if fileExt.startswith(".") else fileExt
+    fileTypes = ["aac", "ai", "bmp", "cs", "css", "csv", "doc", "docx", "exe", "gif", "heic", "html", "java", "jpg", "js", "json", "jsx", "key", "m4p", "md", "mdx", "mov", "mp3",
+                 "mp4", "otf", "pdf", "php", "png", "pptx", "psd", "py", "raw", "rb", "sass", "scss", "sh", "sql", "svg", "tiff", "tsx", "ttf", "txt", "wav", "woff", "xlsx", "xml", "yml"]
+    fileIconClass = f"bi bi-filetype-{fileExt}" if fileExt in fileTypes else "bi bi-file-earmark"
+    return fileIconClass
+
+@main_bp.route('/captured/', defaults={'reqPath':""})
+@main_bp.route('/captured/<path:reqPath>')
+def captured(reqPath):
+    absPath = safe_join(baseMaskPath, reqPath)
+
+    if not os.path.exists(absPath):
+        return abort(404)
+
+    if os.path.isfile(absPath):
+        return send_file(absPath)
+
+    def fObjfromScan(x):
+        fIcon = 'bi bi-folder-fill' if os.path.isdir(x.path) else getIconClassForFilename(x.name)
+        fileStat = x.stat()
+        fBytes = getReadableByteSize(fileStat.st_size)
+        fTime = getTimeStampString(fileStat.st_mtime)
+        return {
+            'name': x.name, 
+            'size': fBytes, 
+            'mTime': fTime,
+            'fIcon': fIcon,
+            'fLink': os.path.relpath(x.path, baseMaskPath).replace("\\", "/")
+            # 'fLink': x.path
+            }
+    fNames = [fObjfromScan(x) for x in os.scandir(absPath)]
+    parentPath = os.path.relpath(Path(absPath).parents[0], baseMaskPath).replace("\\", "/")
+    return render_template('home/browse.html.j2', files=fNames, parentPath=parentPath)

@@ -502,4 +502,4 @@ def captured(reqPath):
             }
     fNames = [fObjfromScan(x) for x in os.scandir(absPath)]
     parentPath = os.path.relpath(Path(absPath).parents[0], baseMaskPath).replace("\\", "/")
-    return render_template('home/browse.html.j2', files=fNames, parentPath=parentPath)
+    return render_template('home/browse.html.j2', files=fNames, parentPath=parentPath, title='Captured Person')

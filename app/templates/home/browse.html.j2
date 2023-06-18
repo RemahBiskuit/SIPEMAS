@@ -55,7 +55,7 @@
                             <tr>
                                 <th class="border-0 rounded-start">Name</th>
                                 <th class="border-0">Modified Time</th>
-                                <th class="border-0 rounded-end">Size</th>
+                                <!-- <th class="border-0 rounded-end">Size</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -68,7 +68,7 @@
                                     </a>
                                 </td>
                                 <td></td>
-                                <td></td>
+                                <!-- <td></td> -->
                             </tr>
                             {% for fileObj in files %}
                             <tr>
@@ -79,8 +79,8 @@
                                     </span>
                                     </a>
                                 </td>
-                                <td>{{ fileObj['mtime'] }}</td>
-                                <td>{{ fileObj['size'] }}</td>
+                                <td>{{ fileObj['mTime'] }}</td>
+                                <!-- <td>{{ fileObj['size'] }}</td> -->
                             </tr>
                             {% endfor %}
                         </tbody>

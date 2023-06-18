@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FileField, SelectField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Email, Length
 
 class RegistrationForm(FlaskForm):
@@ -11,7 +11,7 @@ class RegistrationForm(FlaskForm):
     nama = StringField('Nama', validators=[DataRequired()])
     alamat = StringField('Alamat', validators=[DataRequired()])
     notelp = StringField('No. Telp', validators=[DataRequired(), Length(min=12, max=13)])
-    gender = StringField('Gender', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Laki-laki', 'Laki-laki'), ('Perempuan', 'Perempuan')])
     submit = SubmitField(label='Sign Up')
 
 class LoginForm(FlaskForm):
@@ -26,7 +26,7 @@ class TambahUserForm(FlaskForm):
     nama = StringField('Nama', validators=[DataRequired()])
     alamat = StringField('Alamat', validators=[DataRequired()])
     notelp = StringField('No. Telp', validators=[DataRequired(), Length(min=12, max=13)])
-    gender = StringField('Gender', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Laki-laki', 'Laki-laki'), ('Perempuan', 'Perempuan')])
     submit = SubmitField(label='Tambah User')
 
 class EditUserForm(FlaskForm):
@@ -36,7 +36,7 @@ class EditUserForm(FlaskForm):
     nama = StringField('Nama', validators=[DataRequired()])
     alamat = StringField('Alamat', validators=[DataRequired()])
     notelp = StringField('No. Telp', validators=[DataRequired(), Length(min=12, max=13)])
-    gender = StringField('Gender', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Laki-laki', 'Laki-laki'), ('Perempuan', 'Perempuan')])
     submit = SubmitField(label='Ubah User')
 
 class TambahRoleForm(FlaskForm):
@@ -53,7 +53,7 @@ class UbahProfilForm(FlaskForm):
     nama = StringField('Nama', validators=[DataRequired()])
     alamat = StringField('Alamat', validators=[DataRequired()])
     notelp = StringField('No. Telp', validators=[DataRequired(), Length(min=12, max=13)])
-    gender = StringField('Gender', validators=[DataRequired()])
+    gender = SelectField('Gender', choices=[('Laki-laki', 'Laki-laki'), ('Perempuan', 'Perempuan')])
     submit = SubmitField(label='Ubah Profil')
 
 class PhotoMaskForm(FlaskForm):

@@ -68,7 +68,7 @@
                             <!-- Item -->
                             {% for u in users %}
                             <tr>
-                                <td><a href="#" class="text-primary fw-bold">{{ u.id }}</a> </td>
+                                <td><a href="#" class="text-primary fw-bold">{{ loop.index }}</a> </td>
                                 <td class="text-primary fw-bold">{{ u.username }}</td>
                                 <td class="text-primary fw-bold">{{ u.email }}</td>
                                 <td class="text-primary fw-bold">{{ u.nama }}</td>

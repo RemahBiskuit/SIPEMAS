@@ -64,7 +64,8 @@
                             <!-- Item -->
                             {% for r in roles %}
                             <tr>
-                                <td><a href="#" class="text-primary fw-bold">{{ r.id }}</a> </td>
+                                <td><a href="#" class="text-primary fw-bold">{{ loop.index }}</a> </td>
+                                <!-- <td><a href="#" class="text-primary fw-bold">{{ r.id }}</a> </td> -->
                                 <td class="text-primary fw-bold">{{ r.role }}</td>
                                 <td class="text-primary fw-bold">
                                     <a type="button" href="/edit_role/{{ r.id }}"

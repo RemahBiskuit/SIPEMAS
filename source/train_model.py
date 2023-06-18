@@ -14,18 +14,20 @@ from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, AveragePooli
 from tensorflow.keras.models import Model
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
-from tensorflow.keras.optimizers import Adam
+from keras.optimizers import Adam
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 
-# sys.path.append("../")
+#sys.path.append("../")
 
-PATH_TO_IMAGE = "G:/skripsi/CV-Mask-detection-master/data/mask_dataset"#"../data/mask_dataset"
-MODELS_PATH = "G:/skripsi/CV-Mask-detection-master/models"
+#PATH_TO_IMAGE = "G:/skripsi/CV-Mask-detection-master/data/mask_dataset"#"../data/mask_dataset"
+#MODELS_PATH = "G:/skripsi/CV-Mask-detection-master/models"
+PATH_TO_IMAGE = "D:/KULIAH/TA/1. INI FOLDER SKRIPSI/SIPEMAS/data/mask_dataset"
+MODELS_PATH = "D:/KULIAH/TA/1. INI FOLDER SKRIPSI/SIPEMAS/models"
 # initialize the initial learning rate, number of epochs to train for,
 # and batch size
 INIT_LR = 1e-4
-EPOCHS = 20
+EPOCHS = 10
 BS = 8
 
 

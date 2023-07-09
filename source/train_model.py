@@ -14,21 +14,19 @@ from tensorflow.keras.layers import Input, Dense, Dropout, Flatten, AveragePooli
 from tensorflow.keras.models import Model
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
-from keras.optimizers import Adam
+from tensorflow.keras.optimizers.legacy import Adam
 import matplotlib.pyplot as plt
 from sklearn.metrics import classification_report
 
 #sys.path.append("../")
 
-#PATH_TO_IMAGE = "G:/skripsi/CV-Mask-detection-master/data/mask_dataset"#"../data/mask_dataset"
-#MODELS_PATH = "G:/skripsi/CV-Mask-detection-master/models"
 PATH_TO_IMAGE = "D:/KULIAH/TA/1. INI FOLDER SKRIPSI/SIPEMAS/data/mask_dataset"
 MODELS_PATH = "D:/KULIAH/TA/1. INI FOLDER SKRIPSI/SIPEMAS/models"
 # initialize the initial learning rate, number of epochs to train for,
 # and batch size
 INIT_LR = 1e-4
 EPOCHS = 10
-BS = 8
+BS = 32
 
 
 def collect_images_and_labels(path_to_images):
@@ -40,7 +38,6 @@ def collect_images_and_labels(path_to_images):
         """
     data = []
     labels = []
-    print(labels)
 
     for img_path in list(paths.list_images(path_to_images)):
         # extract the class label from the filename
@@ -54,7 +51,6 @@ def collect_images_and_labels(path_to_images):
         # update the data and labels lists, respectively
         data.append(image)
         labels.append(label)
-        # print(labels)
 
     return data, labels
 
@@ -66,8 +62,7 @@ def preprocess_labels(labels):
     """
     lb = LabelBinarizer()
     labels = lb.fit_transform(labels)
-    print(labels)
-    #labels = to_categorical(labels)
+    labels = to_categorical(labels)
     return labels
 
 
@@ -80,7 +75,7 @@ def tts_split(data, labels):
 
 def load_base_mobilenetv2():
     # load the MobileNetV2 network, left off the head FC layer sets
-    baseModel = MobileNetV2(weights="imagenet", classes=3, include_top=False, input_tensor=Input(shape=(224, 224, 3)))
+    baseModel = MobileNetV2(weights="imagenet", include_top=False, input_tensor=Input(shape=(224, 224, 3)))
 
     # construct the head of the model that will be placed on top of the
     # the base model
@@ -89,7 +84,7 @@ def load_base_mobilenetv2():
     headModel.add(Flatten(name="flatten"))
     headModel.add(Dense(128, activation="relu"))
     headModel.add(Dropout(0.5))
-    headModel.add(Dense(3, activation="softmax"))
+    headModel.add(Dense(2, activation="softmax"))
 
     # place the head FC model on top of the base model
     model = headModel  # Model(inputs=baseModel.input, outputs=headModel)
@@ -178,7 +173,7 @@ def fine_tune_model():
 
     # show a nicely formatted classification report
     print(classification_report(y_test.argmax(axis=1), id_pred,
-                                target_names=["without_mask", "with_mask", "incorrectly_worn"]))
+                                target_names=["without_mask", "with_mask"]))
 
     plot_train_history(H)
     # serialize the model to disk

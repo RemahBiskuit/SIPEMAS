@@ -105,8 +105,9 @@ def detect_mask_in_frame(frame):
         # SumFaces = len(faces_dict["faces_rect"])
         # print(SumFaces)
         
-        # print(asdas[1])
+        print(asdas[1])
         counterObjectNoMask = asdas[1]
+        counterObjectMask = asdas[1]
 
         for i, pred in enumerate(preds):
 
@@ -151,7 +152,7 @@ def detect_mask_in_frame(frame):
                 listToStr = ' '.join(map(str, faces_dict["faces_rect"][i]))
                 # cv2.imwrite(os.path.join(path+str("/withMask"), str(varMask) +str(listToStr.replace(" ","")) + '.png'), crop_img)
                 cv2.imwrite(os.path.join(path+str("/withMask"), str(counterObjectMask) + '.png'), crop_img)
-                write_bb(mask_or_not, confidence, faces_dict["faces_rect"][i], frame)
+                write_bb(mask_or_not, counterObjectMask, faces_dict["faces_rect"][i], frame)
         
     # time.sleep(10)
     # event.wait
@@ -166,16 +167,16 @@ def print_notif():
         return statusNotif
     return statusNotif
 
-def stop_save():
-    global statusSave
-    # print(statusNotif)
-    if statusSave == 0:
-        print("Pause Save!")
-        statusSave = 1
-        # print(statusSave)
-        continue_save()
-        return statusSave
-    return statusSave
+# def stop_save():
+#     global statusSave
+#     # print(statusNotif)
+#     if statusSave == 0:
+#         print("Pause Save!")
+#         statusSave = 1
+#         # print(statusSave)
+#         continue_save()
+#         return statusSave
+#     return statusSave
 
 def continue_save():
     global statusSave

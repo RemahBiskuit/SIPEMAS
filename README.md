@@ -3,7 +3,7 @@
 Sistem Informasi Pendeteksi Masker Politeknik Negeri Jember
 Ini adalah repository untuk tugas akhir sistem deteksi masker berbasis web
 
-## Libraries yang perlu diinstall:
+## Libraries yang perlu di install:
 
 - Flask
 - Tensorflow
